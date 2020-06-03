@@ -2,7 +2,27 @@ const endPoint = "http://localhost:3000/api/v1/quizzes"
 
 document.addEventListener('DOMContentLoaded', () => {
     getQuizzes()
+
+    const createQuizForm = document.querySelector("#quiz-form-container")
+
+    createQuizForm.addEventListener("submit", (e) => createFormHandler(e))
+
 })
+
+function createFormHandler(e) {
+    e.preventDefault()
+    const nameInput = document.querySelector("#input-name").value
+    const categoryInput = document.querySelector("#categories").value
+    postFetch(nameInput, categoryInput)
+}
+
+function postFetch(name, category) {
+    console.log(name, category)
+}
+
+function playQuiz() {
+
+}
 
 function getQuizzes() {
     fetch(endPoint)
@@ -36,11 +56,4 @@ function createQuiz(quiz) {
     quizContainer.appendChild(quizQuestions)
     quizContainer.appendChild(playBtn)
 }
-
-    function playQuiz() {
-
-    }
-
-
-
 }
