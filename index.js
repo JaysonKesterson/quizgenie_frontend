@@ -1,4 +1,5 @@
 const endPoint = "http://localhost:3000/api/v1/quizzes"
+const questionEndPoint = "http://localhost:3000/api/v1/questions"
 
 document.addEventListener('DOMContentLoaded', () => {
     getQuizzes()
@@ -44,7 +45,7 @@ function getQuizzes() {
             createQuiz(quiz)
         })
     })
-
+}
 function createQuiz(quiz) {
     const quizContainer = document.getElementById("quiz-container");
     const quizName = document.createElement("h3")
@@ -67,5 +68,4 @@ function createQuiz(quiz) {
     quizContainer.appendChild(quizName)
     quizContainer.appendChild(quizQuestions)
     quizContainer.appendChild(playBtn)
-}
 }
