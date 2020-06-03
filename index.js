@@ -17,8 +17,20 @@ function createFormHandler(e) {
 }
 
 function postFetch(name, category) {
-    console.log(name, category)
-}
+    fetch(endPoint, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body:JSON.stringify({
+            name: name,
+            category: category
+        })
+    })
+    .then(response => response.json())
+    .then(quiz => {
+        console.log(quiz)
+    })
+    }
+
 
 function playQuiz() {
 
