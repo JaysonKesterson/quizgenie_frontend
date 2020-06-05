@@ -17,6 +17,22 @@ function createFormHandler(e) {
     postFetch(nameInput, categoryInput)
 }
 
+function postQuestion(content, answer, quiz) {
+    fetch(questionEndPoint, {
+        method:"POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            content: content,
+            answer: answer,
+            quiz_id: quiz
+        })
+    })
+    .then(response => response.json())
+    .then(question => {
+    console.log(question)
+})
+
+}
 function postFetch(name, category) {
     fetch(endPoint, {
         method: "POST",
@@ -28,9 +44,13 @@ function postFetch(name, category) {
     })
     .then(response => response.json())
     .then(quiz => {
-        console.log(quiz)
+        const questionContentInput = document.querySelector("#question-content").value
+        const questionAnswerInput = document.querySelector("#question-answer").value
+        postQuestion(questionContentInput, questionAnswerInput, quiz.id)
     })
-    }
+}
+    
+
 
 
 function playQuiz() {
@@ -46,6 +66,17 @@ function getQuizzes() {
         })
     })
 }
+
+function getQuestions() {
+    fetch(questionEndPoint)
+    .then(response => response.json())
+    .then(questions => {
+        questions.data.forEach(question => {
+            console.log(question)
+        })
+    })
+}
+
 function createQuiz(quiz) {
     const quizContainer = document.getElementById("quiz-container");
     const quizName = document.createElement("h3")
