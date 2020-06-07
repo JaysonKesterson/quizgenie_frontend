@@ -2,7 +2,7 @@ const endPoint = "http://localhost:3000/api/v1/quizzes"
 const questionEndPoint = "http://localhost:3000/api/v1/questions"
 
 document.addEventListener('DOMContentLoaded', () => {
-    quizGenieHome()
+    createQuizObjs()
 
     const createQuizForm = document.querySelector("#quiz-form-container")
 
@@ -10,32 +10,89 @@ document.addEventListener('DOMContentLoaded', () => {
 
 })
 
-function quizGenieHome() {
-
+function createQuizObjs() {
     fetch(endPoint)
     .then(response => response.json())
     .then(quizzes => {
         quizzes.data.forEach(quiz => {
             let newQuiz = new Quiz(quiz.id, quiz.attributes)
         })
+        quizGenieHome()
+        playQuiz()
     })
+}
 
+function quizGenieHome() {
+    
     const sportsQuizzesData = Quiz.findByCategory("sports")
-    const randomKnowQuizzes = Quiz.findByCategory("Random Knowledge")
-    const musicQuizzes = Quiz.findByCategory("music")
+    const randomKnowQuizzesData = Quiz.findByCategory("random-knowledge")
+    const musicQuizzesData = Quiz.findByCategory("music")
 
 
     const quizContainer = document.getElementById("quiz-container");
+    const quizCategoryContainer = document.getElementById("quiz-category-list-container");
     const title = document.createElement("h1")
+    title.className = "title"
     title.innerText = "Welcome to QuizGenie!"
+
+    const sportsList = document.createElement("ul")
+    const sportsTitle = document.createElement("h2")
+    sportsTitle.textContent = "Sports Quizzes"
     
-    const sportsQuizzes = document.createElement("h3")
+    
     sportsQuizzesData.forEach(quiz => {
-        sportsQuizzes.textContent += quiz.name
+        const sportsQuizzes = document.createElement("li")
+        const playBtn = document.createElement("button")
+        playBtn.className = "play"
+        playBtn.innerText = "Play"
+        playBtn.setAttribute("data-quiz-id", quiz.id)
+        sportsQuizzes.textContent += quiz.name + "  "
+        sportsQuizzes.appendChild(playBtn)
+        sportsList.appendChild(sportsQuizzes)
+    })
+
+    const randomKnowList = document.createElement("ul")
+    const randomKnowTitle = document.createElement("h2")
+    randomKnowTitle.textContent = "Random Knowledge Quizzes"
+    
+    
+    randomKnowQuizzesData.forEach(quiz => {
+        const randomKnowQuizzes = document.createElement("li")
+        const playBtn = document.createElement("button")
+        playBtn.className = "play"
+        playBtn.innerText = "Play"
+        playBtn.setAttribute("data-quiz-id", quiz.id)
+        randomKnowQuizzes.textContent += quiz.name + "  "
+        randomKnowQuizzes.appendChild(playBtn)
+        randomKnowList.appendChild(randomKnowQuizzes)
+    })
+
+    const musicList = document.createElement("ul")
+    const musicTitle = document.createElement("h2")
+    musicTitle.textContent = "Music Quizzes"
+    
+    
+    musicQuizzesData.forEach(quiz => {
+        const musicQuizzes = document.createElement("li")
+        const playBtn = document.createElement("button")
+        playBtn.className = "play"
+        playBtn.innerText = "Play"
+        playBtn.setAttribute("data-quiz-id", quiz.id)
+        musicQuizzes.textContent += quiz.name + "  "
+        musicQuizzes.appendChild(playBtn)
+        musicList.appendChild(musicQuizzes)
     })
 
     quizContainer.appendChild(title)
-    quizContainer.appendChild(sportsQuizzes)
+    quizContainer.appendChild(quizCategoryContainer)
+    quizCategoryContainer.appendChild(sportsTitle)
+    quizCategoryContainer.appendChild(sportsList)
+    quizCategoryContainer.appendChild(randomKnowTitle)
+    quizCategoryContainer.appendChild(randomKnowList)
+    quizCategoryContainer.appendChild(musicTitle)
+    quizCategoryContainer.appendChild(musicList)
+    
+
 }
 
 function createFormHandler(e) {
@@ -80,11 +137,70 @@ function postFetch(name, category) {
     
 
 function playQuiz() {
-    const quizzesToPlay = document.querySelectorAll(".play")
-    quizzesToPlay.addEventListener("click", (e) => liveQuiz(e))
+    const quizButtons = document.querySelectorAll(".play")
+    quizButtons.forEach(button => {
+        button.addEventListener("click", (e) => liveQuiz(e))
+    })
 }
 
-function liveQuiz() {
+function liveQuiz(event) {
+    
+    const quizContainer = document.getElementById("quiz-container")
+    const quizFormContainer = document.getElementById("quiz-form-container")
+    const liveQuizContainer = document.getElementById("live-quiz")
+    const currentQuiz = Quiz.findById(event.target.dataset.quizId)
+    liveQuizContainer.style.removeProperty('display');
+    quizContainer.style.display = "none"
+    quizFormContainer.style.display = "none"
+    
+    const quizTitle = document.createElement("h1")
+    quizTitle.textContent = "Playing " + currentQuiz.name
+
+    const playQuizForm = document.createElement("form")
+    const quizQuestionList = document.createElement("ol")
+
+        currentQuiz.questions.forEach(question => {
+            const quizAnswerBox = document.createElement("input")
+            quizAnswerBox.type = "text"
+            quizAnswerBox.value = ""
+            quizAnswerBox.setAttribute("data-question-id", question.id)
+            quizQuestion = document.createElement("li")
+            quizQuestion.textContent += question.content
+            quizQuestion.appendChild(quizAnswerBox)
+            quizQuestionList.appendChild(quizQuestion)
+        })
+
+        const submitBtn = document.createElement("input")
+        submitBtn.type = "submit"
+        submitBtn.value = "Submit"
+        submitBtn.setAttribute("data-quiz-id", currentQuiz.id)
+
+        const backBtn = document.createElement("button")
+        backBtn.className = "back"
+        backBtn.innerText = "Back to Home"
+
+        submitBtn.addEventListener("click", (event) => quizResults(event))
+
+        backBtn.addEventListener("click", (event) => goHome(event))
+
+    playQuizForm.appendChild(quizQuestionList)    
+    liveQuizContainer.appendChild(quizTitle)
+    liveQuizContainer.appendChild(playQuizForm)
+    liveQuizContainer.appendChild(submitBtn)
+    liveQuizContainer.appendChild(backBtn)
+}
+
+function quizResults(event) {
+    console.log("clicked")
+}
+
+function goHome(event) {
+    const quizContainer = document.getElementById("quiz-container")
+    const quizFormContainer = document.getElementById("quiz-form-container")
+    const liveQuizContainer = document.getElementById("live-quiz")
+    quizContainer.style.removeProperty('display');
+    quizFormContainer.style.removeProperty('display');
+    liveQuizContainer.style.display = "none"
 }
 
 function getQuizzes() {
