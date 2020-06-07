@@ -12,11 +12,11 @@ class Quiz {
         const quizName = document.createElement("h3")
         quizName.innerText = this.name
     
-        const quizQuestions = document.createElement("p")
-        quizQuestions.setAttribute('style', 'white-space:pre;')
-        this.questions.forEach(question => {
-            quizQuestions.textContent += question.content + "\r\n"
-        })
+        // const quizQuestions = document.createElement("p")
+        // quizQuestions.setAttribute('style', 'white-space:pre;')
+        // this.questions.forEach(question => {
+        //     quizQuestions.textContent += question.content + "\r\n"
+        // })
     
         const playBtn = document.createElement("button")
         playBtn.className = "play"
