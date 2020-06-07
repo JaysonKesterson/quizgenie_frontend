@@ -34,6 +34,10 @@ class Quiz {
     static findById(id) {
         return this.all.find(quiz => quiz.id === id)
     }
+
+    static findByCategory(category) {
+        return this.all.filter(quiz => quiz.category === category)
+    }
     
 }
 
