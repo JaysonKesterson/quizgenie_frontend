@@ -1,0 +1,15 @@
+body {
+    background-color: lightgrey;
+}
+
+.title {
+    text-align: center;
+}
+
+.quiz-container {
+    padding: 1px 1px;
+}
+
+h1 {
+    font-family: Arial, Helvetica, sans-serif;
+}
