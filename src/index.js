@@ -149,7 +149,6 @@ function liveQuiz(event) {
     const quizFormContainer = document.getElementById("quiz-form-container")
     const liveQuizContainer = document.getElementById("live-quiz")
     const currentQuiz = Quiz.findById(event.target.dataset.quizId)
-    liveQuizContainer.style.removeProperty('display');
     quizContainer.style.display = "none"
     quizFormContainer.style.display = "none"
     
@@ -157,12 +156,14 @@ function liveQuiz(event) {
     quizTitle.textContent = "Playing " + currentQuiz.name
 
     const playQuizForm = document.createElement("form")
+    playQuizForm.className = "play-quiz"
     const quizQuestionList = document.createElement("ol")
 
         currentQuiz.questions.forEach(question => {
             const quizAnswerBox = document.createElement("input")
+            quizAnswerBox.className = "answer-box"
             quizAnswerBox.type = "text"
-            quizAnswerBox.value = ""
+            quizAnswerBox.setAttribute("value", "")
             quizAnswerBox.setAttribute("data-question-id", question.id)
             quizQuestion = document.createElement("li")
             quizQuestion.textContent += question.content
@@ -179,19 +180,25 @@ function liveQuiz(event) {
         backBtn.className = "back"
         backBtn.innerText = "Back to Home"
 
-        submitBtn.addEventListener("click", (event) => quizResults(event))
-
         backBtn.addEventListener("click", (event) => goHome(event))
 
-    playQuizForm.appendChild(quizQuestionList)    
+    playQuizForm.appendChild(quizQuestionList)  
+    playQuizForm.appendChild(submitBtn)  
     liveQuizContainer.appendChild(quizTitle)
     liveQuizContainer.appendChild(playQuizForm)
-    liveQuizContainer.appendChild(submitBtn)
     liveQuizContainer.appendChild(backBtn)
+
+    playQuizForm.addEventListener("submit", (event) => {quizResults(event)})
 }
 
 function quizResults(event) {
-    console.log("clicked")
+    event.preventDefault();
+    const playQuizForm = document.querySelector(".play-quiz")
+    const quizAnswerBox = document.querySelectorAll(".answer-box")
+    quizAnswerBox.forEach(box => {
+        const inputValues = []
+        inputValues.push(box.value)
+    })
 }
 
 function goHome(event) {
