@@ -17,4 +17,4 @@ class Question {
    
 }
 
-Quiz.all = []
+Question.all = []
