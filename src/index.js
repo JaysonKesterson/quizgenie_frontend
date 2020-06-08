@@ -17,10 +17,22 @@ function createQuizObjs() {
         quizzes.data.forEach(quiz => {
             let newQuiz = new Quiz(quiz.id, quiz.attributes)
         })
+        createQuestionObjs()
         quizGenieHome()
         playQuiz()
     })
 }
+
+function createQuestionObjs() {
+    fetch(questionEndPoint)
+    .then(response => response.json())
+    .then(questions => {
+        questions.data.forEach(question => {
+            let newQuestion = new Question(question.id, question.attributes)
+        })
+    })
+}
+
 
 function quizGenieHome() {
     
