@@ -20,6 +20,7 @@ function createQuizObjs() {
         createQuestionObjs()
         quizGenieHome()
         playQuiz()
+        createQuestionBtnAdder()
     })
 }
 
@@ -112,6 +113,31 @@ function createFormHandler(e) {
     const nameInput = document.querySelector("#input-name").value
     const categoryInput = document.querySelector("#categories").value
     postFetch(nameInput, categoryInput)
+}
+
+function createQuestionBtnAdder() {
+    const addBtn = document.querySelector("#add-question")
+
+    addBtn.addEventListener("click", (e) => {
+        e.preventDefault()
+        const questionInputs = document.getElementById("question-inputs")
+        const contentInput = document.createElement("input")
+        const answerInput = document.createElement("input")
+        const linebreak = document.createElement("br");
+
+        contentInput.id = "question-content"
+        contentInput.setAttribute("value", "")
+        contentInput.setAttribute("placeholder", "Enter Question")
+
+        answerInput.id = "question-answer"
+        answerInput.setAttribute("value", "")
+        answerInput.setAttribute("placeholder", "Enter Answer")
+
+
+        questionInputs.appendChild(contentInput)
+        questionInputs.appendChild(answerInput)
+        questionInputs.appendChild(linebreak)
+    })
 }
 
 function postQuestion(content, answer, quiz) {
