@@ -167,9 +167,22 @@ function postFetch(name, category) {
     })
     .then(response => response.json())
     .then(quiz => {
-        const questionContentInput = document.querySelector("#question-content").value
-        const questionAnswerInput = document.querySelector("#question-answer").value
-        postQuestion(questionContentInput, questionAnswerInput, quiz.id)
+        const questionContentInputs = document.querySelectorAll("#question-content")
+        const questionAnswerInputs = document.querySelectorAll("#question-answer")
+        const questionContentValues = []
+        const questionAnswerValues = []
+
+        questionContentInputs.forEach((content, index) =>{
+            questionContentValues.push(content.value)
+            questionAnswerValues.push(questionAnswerInputs[index].value)
+        })
+
+        console.log(questionContentValues)
+        console.log(questionAnswerValues)
+
+        questionContentValues.forEach((value, index) =>{
+            postQuestion(value, questionAnswerValues[index], quiz.id)
+        })
     })
 }
     
