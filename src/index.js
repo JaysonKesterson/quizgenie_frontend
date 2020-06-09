@@ -161,8 +161,10 @@ function liveQuiz(event) {
     const quizFormContainer = document.getElementById("quiz-form-container")
     const liveQuizContainer = document.getElementById("live-quiz")
     const currentQuiz = Quiz.findById(event.target.dataset.quizId)
+    liveQuizContainer.style.display = "initial"
     quizContainer.style.display = "none"
     quizFormContainer.style.display = "none"
+    
     
     const quizTitle = document.createElement("h1")
     quizTitle.textContent = "Playing " + currentQuiz.name
@@ -186,7 +188,7 @@ function liveQuiz(event) {
         const submitBtn = document.createElement("input")
         submitBtn.type = "submit"
         submitBtn.value = "Submit"
-        submitBtn.setAttribute("data-quiz-id", currentQuiz.id)
+        submitBtn.setAttribute("id", currentQuiz.id)
 
         const backBtn = document.createElement("button")
         backBtn.className = "back"
@@ -205,21 +207,74 @@ function liveQuiz(event) {
 
 function quizResults(event) {
     event.preventDefault();
+    const liveQuizContainer = document.getElementById("live-quiz")
+    const quizResultsContainer = document.getElementById("quiz-results")
+    liveQuizContainer.style.display = "none"
     const playQuizForm = document.querySelector(".play-quiz")
     const quizAnswerBox = document.querySelectorAll(".answer-box")
+    const quizQuestions = Question.findByQuiz(parseInt(event.target.lastChild.id))
+    const quizTaken = Quiz.findById(event.target.lastChild.id)
+    const questionsIncorrect = []
+    const inputValues = []
+    const answerValues = []
+    let numberCorrect = 0
     quizAnswerBox.forEach(box => {
-        const inputValues = []
-        inputValues.push(box.value)
+        inputValues.push(box.value.toUpperCase())
     })
+    quizQuestions.forEach(question =>{
+        answerValues.push(question.answer.toUpperCase())
+    })
+    
+    answerValues.forEach((answer, index) => {
+        if (answer === inputValues[index]) {
+            numberCorrect += 1
+        } else {
+            questionsIncorrect.push(quizQuestions[index])
+        }
+    })
+
+    const percentageRight = Math.floor(((numberCorrect / quizQuestions.length)*100))
+
+    const resultTitle = document.createElement("h1")
+    resultTitle.textContent = `Results for ${quizTaken.name}`
+
+    const answerResults = document.createElement("h2")
+    answerResults.textContent = `You got ${numberCorrect}/${quizQuestions.length} correct for a score of ${percentageRight}%!`
+
+    const wrongQuestionsList = document.createElement("ol")
+    const wrongQuestionsTitle = document.createElement("h3")
+
+    wrongQuestionsTitle.textContent = "Here are the questions you missed and their corresponding answers: "
+
+    questionsIncorrect.forEach(question => {
+        const questionLi = document.createElement("li")
+        questionLi.textContent = question.content + "    :    " + `Correct Answer : ${question.answer}`
+        wrongQuestionsList.appendChild(questionLi)
+    })
+
+    const backBtn = document.createElement("button")
+        backBtn.className = "back"
+        backBtn.innerText = "Back to Home"
+
+        backBtn.addEventListener("click", (event) => goHome(event))
+
+
+    quizResultsContainer.appendChild(resultTitle)
+    quizResultsContainer.appendChild(answerResults)
+    quizResultsContainer.appendChild(wrongQuestionsTitle)
+    quizResultsContainer.appendChild(wrongQuestionsList)
+    quizResultsContainer.appendChild(backBtn)
 }
 
 function goHome(event) {
     const quizContainer = document.getElementById("quiz-container")
     const quizFormContainer = document.getElementById("quiz-form-container")
     const liveQuizContainer = document.getElementById("live-quiz")
-    quizContainer.style.removeProperty('display');
-    quizFormContainer.style.removeProperty('display');
+    const quizResultsContainer = document.getElementById("quiz-results")
+    quizContainer.style.display = "initial";
+    quizFormContainer.style.display = "initial";
     liveQuizContainer.style.display = "none"
+    quizResultsContainer.style.display = "none"
 }
 
 function getQuizzes() {
@@ -233,13 +288,4 @@ function getQuizzes() {
     })
 }
 
-function getQuestions() {
-    fetch(questionEndPoint)
-    .then(response => response.json())
-    .then(questions => {
-         questions.data.forEach(question => {
-            console.log(question)
-        })
-    })
-}
 
