@@ -1,9 +1,8 @@
 class Question {
-    constructor(id, questionAttributes){
+    constructor(id, content, answer){
        this.id = id
-       this.content = questionAttributes.content
-       this.answer = questionAttributes.answer
-       this.quiz_id = questionAttributes.quiz_id
+       this.content = content
+       this.answer = answer
        Question.all.push(this)
     }
 
