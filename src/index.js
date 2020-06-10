@@ -3,7 +3,6 @@ const questionEndPoint = "http://localhost:3000/api/v1/questions"
 
 document.addEventListener('DOMContentLoaded', () => {
     createQuizObjs()
-
     const createQuizForm = document.querySelector("#quiz-form-container")
 
     createQuizForm.addEventListener("submit", (e) => createFormHandler(e))
@@ -21,6 +20,7 @@ function createQuizObjs() {
         quizGenieHome()
         playQuiz()
         createQuestionBtnAdder()
+        addQuizIdToQuestions()
     })
 }
 
@@ -29,7 +29,7 @@ function createQuestionObjs() {
     .then(response => response.json())
     .then(questions => {
         questions.data.forEach(question => {
-            let newQuestion = new Question(question.id, question.attributes)
+            let newQuestion = new Question(question.id, question.attributes.content, question.attributes.answer)
         })
     })
 }
@@ -112,7 +112,16 @@ function createFormHandler(e) {
     e.preventDefault()
     const nameInput = document.querySelector("#input-name").value
     const categoryInput = document.querySelector("#categories").value
-    postFetch(nameInput, categoryInput)
+    const questionContents = e.target.querySelectorAll("#question-content")
+    const questionAnswers = e.target.querySelectorAll("#question-answer")
+    const questions = []
+
+    questionContents.forEach((content, index) => {
+        let newQuestion = new Question(Quiz.all.length, content.value, questionAnswers[index].value)
+        questions.push(newQuestion)
+    })
+    
+    postQuiz(nameInput, categoryInput, questions)
 }
 
 function createQuestionBtnAdder() {
@@ -140,49 +149,20 @@ function createQuestionBtnAdder() {
     })
 }
 
-function postQuestion(content, answer, quiz) {
-    fetch(questionEndPoint, {
-        method:"POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-            content: content,
-            answer: answer,
-            quiz_id: quiz
-        })
-    })
-    .then(response => response.json())
-    .then(question => {
-    console.log(question)
-})
 
-}
-function postFetch(name, category) {
+function postQuiz(name, category, questions) {
     fetch(endPoint, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body:JSON.stringify({
             name: name,
-            category: category
+            category: category,
+            questions: questions
         })
     })
     .then(response => response.json())
     .then(quiz => {
-        const questionContentInputs = document.querySelectorAll("#question-content")
-        const questionAnswerInputs = document.querySelectorAll("#question-answer")
-        const questionContentValues = []
-        const questionAnswerValues = []
-
-        questionContentInputs.forEach((content, index) =>{
-            questionContentValues.push(content.value)
-            questionAnswerValues.push(questionAnswerInputs[index].value)
-        })
-
-        console.log(questionContentValues)
-        console.log(questionAnswerValues)
-
-        questionContentValues.forEach((value, index) =>{
-            postQuestion(value, questionAnswerValues[index], quiz.id)
-        })
+        console.log(quiz)
     })
 }
     
@@ -196,9 +176,12 @@ function playQuiz() {
 
 function liveQuiz(event) {
     
+
     const quizContainer = document.getElementById("quiz-container")
     const quizFormContainer = document.getElementById("quiz-form-container")
     const liveQuizContainer = document.getElementById("live-quiz")
+    liveQuizContainer.innerHTML = ""
+
     const currentQuiz = Quiz.findById(event.target.dataset.quizId)
     liveQuizContainer.style.display = "initial"
     quizContainer.style.display = "none"
@@ -248,6 +231,8 @@ function quizResults(event) {
     event.preventDefault();
     const liveQuizContainer = document.getElementById("live-quiz")
     const quizResultsContainer = document.getElementById("quiz-results")
+    quizResultsContainer.innerHTML = ""
+    quizResultsContainer.style.display = "initial"
     liveQuizContainer.style.display = "none"
     const playQuizForm = document.querySelector(".play-quiz")
     const quizAnswerBox = document.querySelectorAll(".answer-box")
@@ -284,6 +269,7 @@ function quizResults(event) {
     const wrongQuestionsTitle = document.createElement("h3")
 
     wrongQuestionsTitle.textContent = "Here are the questions you missed and their corresponding answers: "
+    
 
     questionsIncorrect.forEach(question => {
         const questionLi = document.createElement("li")
@@ -316,13 +302,12 @@ function goHome(event) {
     quizResultsContainer.style.display = "none"
 }
 
-function getQuizzes() {
-    fetch(endPoint)
+function addQuizIdToQuestions() {
+    fetch(questionEndPoint)
     .then(response => response.json())
-    .then(quizzes => {
-        quizzes.data.forEach(quiz => {
-            let newQuiz = new Quiz(quiz.id, quiz.attributes)
-            newQuiz.render()
+    .then(questions => {
+        questions.data.forEach((question,index) => {
+            Question.all[index].quiz_id = question.attributes.quiz_id
         })
     })
 }
