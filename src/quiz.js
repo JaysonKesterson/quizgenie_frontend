@@ -1,9 +1,9 @@
 class Quiz {
-     constructor(id, quizAttributes){
+     constructor(id, name, category, questions){
         this.id = id
-        this.name = quizAttributes.name
-        this.category = quizAttributes.category
-        this.questions = quizAttributes.questions
+        this.name = name
+        this.category = category
+        this.questions =questions
         Quiz.all.push(this)
      }
 
@@ -12,19 +12,11 @@ class Quiz {
         const quizName = document.createElement("h3")
         quizName.innerText = this.name
     
-        // const quizQuestions = document.createElement("p")
-        // quizQuestions.setAttribute('style', 'white-space:pre;')
-        // this.questions.forEach(question => {
-        //     quizQuestions.textContent += question.content + "\r\n"
-        // })
     
         const playBtn = document.createElement("button")
         playBtn.className = "play"
         playBtn.innerText = "Play Quiz"
         playBtn.setAttribute("data-quiz-id", this.id)
-        // playBtn.addEventListener("click", function() {
-        //     playQuiz()
-        // })
     
         quizContainer.appendChild(quizName)
         quizContainer.appendChild(quizQuestions)
