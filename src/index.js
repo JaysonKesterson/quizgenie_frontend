@@ -14,7 +14,7 @@ function createQuizObjs() {
     .then(response => response.json())
     .then(quizzes => {
         quizzes.data.forEach(quiz => {
-            let newQuiz = new Quiz(quiz.id, quiz.attributes)
+            let newQuiz = new Quiz(quiz.id, quiz.attributes.name, quiz.attributes.category, quiz.attributes.questions)
         })
         createQuestionObjs()
         quizGenieHome()
@@ -29,7 +29,7 @@ function createQuestionObjs() {
     .then(response => response.json())
     .then(questions => {
         questions.data.forEach(question => {
-            let newQuestion = new Question(question.id, question.attributes.content, question.attributes.answer)
+            let newQuestion = new Question(question.id, question.attributes.content, question.attributes.answer, question.attributes.quiz_id)
         })
     })
 }
@@ -43,7 +43,9 @@ function quizGenieHome() {
 
 
     const quizContainer = document.getElementById("quiz-container");
-    const quizCategoryContainer = document.getElementById("quiz-category-list-container");
+    const sportsQuizContainer = document.getElementById("sports-quizzes");
+    const randomQuizContainer = document.getElementById("random-knowledge-quizzes");
+    const musicQuizContainer = document.getElementById("music-quizzes");
     const title = document.createElement("h1")
     title.className = "title"
     title.innerText = "Welcome to QuizGenie!"
@@ -97,15 +99,15 @@ function quizGenieHome() {
     })
 
     quizContainer.appendChild(title)
-    quizContainer.appendChild(quizCategoryContainer)
-    quizCategoryContainer.appendChild(sportsTitle)
-    quizCategoryContainer.appendChild(sportsList)
-    quizCategoryContainer.appendChild(randomKnowTitle)
-    quizCategoryContainer.appendChild(randomKnowList)
-    quizCategoryContainer.appendChild(musicTitle)
-    quizCategoryContainer.appendChild(musicList)
-    
-
+    sportsQuizContainer.appendChild(sportsTitle)
+    sportsQuizContainer.appendChild(sportsList)
+    randomQuizContainer.appendChild(randomKnowTitle)
+    randomQuizContainer.appendChild(randomKnowList)
+    musicQuizContainer.appendChild(musicTitle)
+    musicQuizContainer.appendChild(musicList)
+    quizContainer.appendChild(sportsQuizContainer)
+    quizContainer.appendChild(randomQuizContainer)
+    quizContainer.appendChild(musicQuizContainer)
 }
 
 function createFormHandler(e) {
@@ -117,7 +119,7 @@ function createFormHandler(e) {
     const questions = []
 
     questionContents.forEach((content, index) => {
-        let newQuestion = new Question(Quiz.all.length, content.value, questionAnswers[index].value)
+        let newQuestion = new Question(`${Question.all.length}`, content.value, questionAnswers[index].value, (Quiz.all.length + 1))
         questions.push(newQuestion)
     })
     
@@ -162,8 +164,28 @@ function postQuiz(name, category, questions) {
     })
     .then(response => response.json())
     .then(quiz => {
-        console.log(quiz)
+        renderNewQuiz(quiz)
     })
+}
+
+function renderNewQuiz(quiz) {
+    const appropriateContainer = document.getElementById(`${quiz.category}-quizzes`)
+    const appropriateUl = appropriateContainer.getElementsByTagName("ul")[0]
+    const quizName = document.createElement("li")
+    quizName.innerText = quiz.name
+
+
+    const newQuiz = new Quiz(`${quiz.id}`, quiz.name, quiz.category)
+
+    const playBtn = document.createElement("button")
+    playBtn.className = "play"
+    playBtn.innerText = "Play"
+    playBtn.setAttribute("data-quiz-id", quiz.id)
+    playBtn.addEventListener("click", (e) => liveQuiz(e))
+    
+    quizName.appendChild(playBtn)
+    appropriateUl.appendChild(quizName)
+
 }
     
 
@@ -176,26 +198,26 @@ function playQuiz() {
 
 function liveQuiz(event) {
     
-
     const quizContainer = document.getElementById("quiz-container")
     const quizFormContainer = document.getElementById("quiz-form-container")
     const liveQuizContainer = document.getElementById("live-quiz")
     liveQuizContainer.innerHTML = ""
 
+
     const currentQuiz = Quiz.findById(event.target.dataset.quizId)
     liveQuizContainer.style.display = "initial"
     quizContainer.style.display = "none"
     quizFormContainer.style.display = "none"
-    
-    
+
     const quizTitle = document.createElement("h1")
     quizTitle.textContent = "Playing " + currentQuiz.name
 
+    const questions = Question.findByQuiz(parseInt(currentQuiz.id))
     const playQuizForm = document.createElement("form")
     playQuizForm.className = "play-quiz"
     const quizQuestionList = document.createElement("ol")
 
-        currentQuiz.questions.forEach(question => {
+        questions.forEach(question => {
             const quizAnswerBox = document.createElement("input")
             quizAnswerBox.className = "answer-box"
             quizAnswerBox.type = "text"
