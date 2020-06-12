@@ -46,13 +46,16 @@ function quizGenieHome() {
     const sportsQuizContainer = document.getElementById("sports-quizzes");
     const randomQuizContainer = document.getElementById("random-knowledge-quizzes");
     const musicQuizContainer = document.getElementById("music-quizzes");
-    const title = document.createElement("h1")
+    const title = document.createElement("h2")
     title.className = "title"
     title.innerText = "Welcome to QuizGenie!"
 
+    const newSportsContainer = document.createElement("div")
+    newSportsContainer.setAttribute("class", "center #03a9f4 light-blue")
+    
     const sportsList = document.createElement("ul")
-    const sportsTitle = document.createElement("h2")
-    sportsTitle.textContent = "Sports Quizzes"
+    const sportsTitle = document.createElement("h3")
+    sportsTitle.textContent = "Sports"
     
     
     sportsQuizzesData.forEach(quiz => {
@@ -66,9 +69,11 @@ function quizGenieHome() {
         sportsList.appendChild(sportsQuizzes)
     })
 
+    const newKnowledgeContainer = document.createElement("div")
+    newKnowledgeContainer.setAttribute("class", "center green lighten-2")
     const randomKnowList = document.createElement("ul")
-    const randomKnowTitle = document.createElement("h2")
-    randomKnowTitle.textContent = "Random Knowledge Quizzes"
+    const randomKnowTitle = document.createElement("h3")
+    randomKnowTitle.textContent = "Knowledge"
     
     
     randomKnowQuizzesData.forEach(quiz => {
@@ -82,9 +87,11 @@ function quizGenieHome() {
         randomKnowList.appendChild(randomKnowQuizzes)
     })
 
+    const newMusicContainer = document.createElement("div")
+    newMusicContainer.setAttribute("class", "center orange lighten-2")
     const musicList = document.createElement("ul")
-    const musicTitle = document.createElement("h2")
-    musicTitle.textContent = "Music Quizzes"
+    const musicTitle = document.createElement("h3")
+    musicTitle.textContent = "Music"
     
     
     musicQuizzesData.forEach(quiz => {
@@ -99,11 +106,14 @@ function quizGenieHome() {
     })
 
     quizContainer.appendChild(title)
-    sportsQuizContainer.appendChild(sportsTitle)
+    newSportsContainer.appendChild(sportsTitle)
+    sportsQuizContainer.appendChild(newSportsContainer)
     sportsQuizContainer.appendChild(sportsList)
-    randomQuizContainer.appendChild(randomKnowTitle)
+    newKnowledgeContainer.appendChild(randomKnowTitle)
+    randomQuizContainer.appendChild(newKnowledgeContainer)
     randomQuizContainer.appendChild(randomKnowList)
-    musicQuizContainer.appendChild(musicTitle)
+    newMusicContainer.appendChild(musicTitle)
+    musicQuizContainer.appendChild(newMusicContainer)
     musicQuizContainer.appendChild(musicList)
     quizContainer.appendChild(sportsQuizContainer)
     quizContainer.appendChild(randomQuizContainer)
@@ -209,7 +219,8 @@ function liveQuiz(event) {
     quizContainer.style.display = "none"
     quizFormContainer.style.display = "none"
 
-    const quizTitle = document.createElement("h1")
+    const quizTitle = document.createElement("h3")
+    const quizBreak = document.createElement("br")
     quizTitle.textContent = "Playing " + currentQuiz.name
 
     const questions = Question.findByQuiz(parseInt(currentQuiz.id))
@@ -243,6 +254,7 @@ function liveQuiz(event) {
     playQuizForm.appendChild(quizQuestionList)  
     playQuizForm.appendChild(submitBtn)  
     liveQuizContainer.appendChild(quizTitle)
+    liveQuizContainer.appendChild(quizBreak)
     liveQuizContainer.appendChild(playQuizForm)
     liveQuizContainer.appendChild(backBtn)
 
@@ -281,14 +293,16 @@ function quizResults(event) {
 
     const percentageRight = Math.floor(((numberCorrect / quizQuestions.length)*100))
 
-    const resultTitle = document.createElement("h1")
+    const resultTitle = document.createElement("h3")
     resultTitle.textContent = `Results for ${quizTaken.name}`
 
-    const answerResults = document.createElement("h2")
+    const answerResults = document.createElement("h4")
     answerResults.textContent = `You got ${numberCorrect}/${quizQuestions.length} correct for a score of ${percentageRight}%!`
 
+    const wrongQuestionsContainer = document.createElement("div")
+    wrongQuestionsContainer.className = "red-text"
     const wrongQuestionsList = document.createElement("ol")
-    const wrongQuestionsTitle = document.createElement("h3")
+    const wrongQuestionsTitle = document.createElement("h4")
 
     wrongQuestionsTitle.textContent = "Here are the questions you missed and their corresponding answers: "
     
@@ -296,6 +310,7 @@ function quizResults(event) {
     questionsIncorrect.forEach(question => {
         const questionLi = document.createElement("li")
         questionLi.textContent = question.content + "    :    " + `Correct Answer : ${question.answer}`
+        wrongQuestionsContainer.appendChild(wrongQuestionsList)
         wrongQuestionsList.appendChild(questionLi)
     })
 
@@ -309,7 +324,7 @@ function quizResults(event) {
     quizResultsContainer.appendChild(resultTitle)
     quizResultsContainer.appendChild(answerResults)
     quizResultsContainer.appendChild(wrongQuestionsTitle)
-    quizResultsContainer.appendChild(wrongQuestionsList)
+    quizResultsContainer.appendChild(wrongQuestionsContainer)
     quizResultsContainer.appendChild(backBtn)
 }
 
