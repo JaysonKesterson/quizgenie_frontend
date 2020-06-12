@@ -6,10 +6,10 @@
     <script type="text/javascript" src="src/index.js"></script>
     <script type="text/javascript" src="src/quiz.js"></script>
     <script type="text/javascript" src="src/question.js"></script>
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
 </head>   
 <body>
-
+<div class="container">
     <div id="live-quiz">
         
     </div>
@@ -18,26 +18,26 @@
 
     </div>
     
-    <div id="quiz-container">
-        <div id="quiz-category-list-container">
-        <div id = "sports-quizzes"></div>
-        <div id="random-knowledge-quizzes"></div>
-        <div id="music-quizzes"></div>
+    <div id="quiz-container" class="row">
+        <div id="quiz-category-list-container" class="col 4 striped">
+                    <img src="data:image/jpeg;base64,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" style="width:80px;height:60px;">
+        <div id="sports-quizzes" class="col 4"></div>
+        <div id="test-table" class="striped"></div>
+        <div id="random-knowledge-quizzes" class="col 4"></div>
+        <div id="music-quizzes" class="col 4"></div>
         </div>
     </div>
 
 
     <div id="quiz-form-container">
         <form id="create-quiz">
-            <h2>Create a Quiz!</h2>
+            <h3>Create a Quiz!</h3>
             <input id="input-name" type="text" value="" placeholder="Enter Quiz Name">
-            <br><br>
-            <select id="categories" name="categories">
+            <select id="categories" name="categories" class="browser-default">
                 <option value="sports">Sports</option>
                 <option value="random-knowledge">Random Knowledge</option>
                 <option value="music">Music</option>
               </select>
-            <br><br>
             <div id="question-inputs">
             <input id="question-content" type="text" value="" placeholder="Enter Question">
             <input id="question-answer" type="text" value="" placeholder="Enter Answer">
@@ -49,6 +49,6 @@
             <input id= 'create-button' type='submit' name='submit' value="Create New Quiz">
         </form>
     </div>
-    
+</div>    
 </body> 
 </html>
